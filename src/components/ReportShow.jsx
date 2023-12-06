@@ -1,11 +1,25 @@
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { loadSingleReportTrunk } from '../store/reports';
 
 const ReportShow = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
   const [goToReport, setGoToReport] = useState(reportId);
-  const report = {}; // populate from Redux store
+  //const report = {}; // populate from Redux store
+
+  const dispatch = useDispatch();
+
+  useEffect (() =>{
+    dispatch(loadSingleReportTrunk(reportId))
+
+  },[dispatch, reportId])
+
+  const report = useSelector(state => state.reports[reportId])
+  //const report = reportArr[0]
+  //console.log(report)
 
   const handleSubmit = e => {
     e.preventDefault();

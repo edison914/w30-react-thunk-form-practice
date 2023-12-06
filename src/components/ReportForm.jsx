@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux'
+import { createNewReportThunk, updateReportThunk } from '../store/reports';
 
 const ReportForm = ({ report, formType }) => {
   const navigate = useNavigate();
@@ -7,10 +9,32 @@ const ReportForm = ({ report, formType }) => {
   const [improvement, setImprovement] = useState(report?.improvement);
   const [errors, setErrors] = useState({});
 
+  //code below
+  const dispatch = useDispatch();
+
+  //must be async because of the dispatch is waiting on the fetch result
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setErrors({});
     report = { ...report, understanding, improvement };
+
+    let res;
+    if (formType === 'Update Report') {
+      //must await for the return from the dispatch
+      res = await dispatch(updateReportThunk(report))
+      //console.log(res)
+    } else {
+      //must await for the return from the dispatch
+      res = await dispatch(createNewReportThunk(report))
+      //console.log(res)
+    }
+
+    if (res.id) {
+      navigate(`/reports/${res.id}`)
+    } else {
+      setErrors(res.errors)
+    }
   };
 
   /* **DO NOT CHANGE THE RETURN VALUE** */

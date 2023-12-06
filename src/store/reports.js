@@ -27,7 +27,84 @@ export const removeReport = (reportId) => ({
 
 /** Thunk Action Creators: */
 
-// Your code here 
+// Your code here
+export const loadReportsThunk = () => async (dispatch) => {
+  const response = await fetch ('/api/reports');
+  //console.log(res.json())
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(loadReports(data));
+  }
+};
+//delete report
+export const deleteReportThunk = (id) => async (dispatch) => {
+
+  const res = await fetch (`/api/reports/${id}`, {
+    method: "DELETE"
+  })
+
+  if (res.ok) {
+    dispatch(removeReport(id))
+  } else {
+    const err = await res.json()
+    return err;
+  }
+};
+
+//create loadsinglereport
+export const loadSingleReportTrunk = (reportId) => async (dispatch) => {
+  const res = await fetch (`/api/reports/${reportId}`)
+
+  if (res.ok) {
+    const data = await res.json()
+    dispatch(receiveReport(data))
+    return data
+  } else {
+    const err = await res.json()
+    return err;
+  }
+}
+//new report thunk
+export const createNewReportThunk = (newForm) => async (dispatch) => {
+  //console.log(newForm)
+  const res = await fetch ("/api/reports", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(newForm)
+  })
+  //console.log(res.ok)
+  if (res.ok) {
+    //console.log(`is this ran`)
+    const data = await res.json()
+    dispatch(receiveReport(data))
+    return data
+  } else {
+    const err = await res.json()
+    return err;
+  }
+}
+
+//update report thunk
+export const updateReportThunk = (report) => async (dispatch) => {
+  const res = await fetch (`/api/reports/${report.id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(report),
+  })
+  console.log(res)
+  if (res.ok) {
+    console.log(`is this ran 2`)
+    const data = await res.json()
+    dispatch(editReport(data))
+    return data
+  } else {
+    //if there are erro saying res.json is not defined
+    //likely due to await is not used for fetch
+    const err = await res.json()
+    return err;
+  }
+}
+
 
 /** Selectors: */
 
